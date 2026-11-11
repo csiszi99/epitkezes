@@ -146,7 +146,8 @@ body.mini main{max-width:400px;margin:0 auto;padding:16px 12px 10px}
 .mn .ev i{width:9px;height:9px;border-radius:50%;flex:none}
 .mn .ev span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mn .ev small{flex:none;font-size:12px;text-align:right}
-.mn .st{display:grid;gap:8px;margin-top:14px}
+.mn .st{display:grid;gap:8px;margin-top:8px}
+.mn .col>.ev{padding:4px 4px}.mn .col>small{display:block;padding:2px 4px}
 .mn .col{padding:8px 6px 6px;border:1px solid var(--line);border-radius:14px;min-width:0}
 .mn .col h4{margin:0 3px 6px;font-size:11px;line-height:1.2;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);font-weight:600}
 .mn .cells{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
@@ -270,11 +271,12 @@ function mTile(l,v,neg,sub,cls){return '<div><small>'+l+'</small><b class="'+(ne
 function mCol(t,c){return '<div class="col"><h4>'+t+'</h4><div class="cells">'+c.join('')+'</div></div>'}
 function rMini(){
   document.body.className='mini';document.title='Építkezés – Mini';
-  var now=new Date(),t0=now.getTime(),yr=now.getFullYear(),h='<div class="mn"><h3 style="margin-top:2px">Közelgő</h3>';
+  var now=new Date(),t0=now.getTime(),yr=now.getFullYear(),h='<div class="mn"><div class="col"><h4>Közelgő</h4>';
   if(!C)h+=mErr('C');else{
     var ev=C.events.filter(function(e){return e.e>t0}).slice(0,4),tk=dk(t0),tm=dk(t0+86400000);
     h+=ev.length?ev.map(function(e){var k=dk(Math.max(e.s,t0)),d=new Date(k+'T12:00:00'),r=evRt(e),lab=k==tk?'Ma':k==tm?'Holnap':MN[d.getMonth()].slice(0,3)+'. '+d.getDate()+'.';
       return '<div class="ev"><i style="background:'+calCol(e)+'"></i><span>'+esc(e.t)+'</span><small>'+(r.indexOf('–')>0?r:lab+' · '+r)+'</small></div>'}).join(''):'<small>Nincs közelgő esemény.</small>'}
+  h+='</div>';
   var oe='…',hn=false,kv='…',lv='…',sent='…',uns='…',mk='…',tok='…',ms='…',mn='',sc='…',sn=false;
   if(H){try{var S=H.y[H.cur].summary,nx=nextLeave(H.cur);oe=esc(S[1][1])+' ó';hn=num(S[1][1])<0;kv=esc(S[2][1])+' nap';lv=nx?(nx.s<=td0()?'Most szabin':rng(nx)):'—'}catch(e){}}
   if(D){try{sent=stats().sentPct.toFixed(0)+'%';uns=D.Koltsegek.filter(function(r){return !r['Készpénz']&&!r['Bankhoz elküldve']}).length+' db';var MK=D.Merfoldkovek.filter(function(r){return r.Típus=='Megvalósítás'});if(!MK.length)MK=D.Merfoldkovek;mk=MK.filter(function(r){return r.Kész}).length+' / '+MK.length}catch(e){}}
@@ -282,7 +284,7 @@ function rMini(){
   if(F){try{var m=famPrev(),t=fSum('Mind',m.ym),bal=t.inc-t.exp,Y=fSum('Mind','Y'+yr);ms=(t.inc?Math.round(bal/t.inc*100):0)+'%';mn=MN[+m.ym.slice(5,7)-1];sc=ftm(Y.inc-Y.exp)+' Ft';sn=Y.inc-Y.exp<0}catch(e){}}
   h+='<div class="st">'+mCol('Munkaórák',[mTile('Óraegyenleg',oe,hn),mTile('Kivehető szabadságok',kv),mTile('Következő szabadság',lv,0,'','sm')])
     +mCol('Építkezés',[mTile('Bankhoz leadva',sent),mTile('Mérföldkövek',mk),mTile('Banknak el nem küldött számlák',uns)])
-    +mCol('Pénzügyek',[mTile('Hátralévő tőke',tok),mTile('Előző havi megtakarítás',ms,0,mn),mTile('Megtakarítás '+yr+' eleje óta',sc,sn)])+'</div>';
+    +mCol('Pénzügyek',[mTile('Hátralévő tőke',tok),mTile('Előző havi megtakarítás',ms),mTile('Megtakarítás '+yr+' eleje óta',sc,sn)])+'</div>';
   h+='<div class="mf"><small>frissítve: '+esc($('#sync').textContent)+'</small></div></div>';
   $('#v').innerHTML=h}
 if(MINI)setInterval(render,30000);
