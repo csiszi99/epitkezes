@@ -166,6 +166,7 @@ body.mini main:active{transform:scale(.985)}body.mini main.go{transform:scale(.9
 @media(min-width:1000px){.tavg{height:240px}.fgrid .tavg{height:150px}}
 body.mini main::before{transition:--p .8s cubic-bezier(.3,.7,.3,1),padding .25s}body.mini main:hover::before,body.mini main.go::before{padding:4px}
 body.mini.fl{padding:0}body.mini.fl main{max-width:none;margin:0}body.mini.fl main::before{inset:0}
+.evr{border:1px solid #e5484d;border-radius:10px;padding:6px 10px;margin-left:-4px;margin-right:-4px}
 #evl{scrollbar-width:none}#evl::-webkit-scrollbar{display:none}
 @media(min-width:1000px){#evl .card{padding:8px 14px;margin-bottom:6px}#evl .row{margin-top:4px!important}}
 </style>
@@ -593,12 +594,13 @@ function evList(max){
   if(!ev.length)return '<div class="card mut">Nincs közelgő esemény.</div>';
   ev.forEach(function(e){var k=dk(Math.max(e.s,C.now));if(!days[k]){days[k]=[];order.push(k)}days[k].push(e)});
   return order.map(function(k){var d=new Date(k+'T12:00:00'),lab=k==dk(C.now)?'Ma':k==dk(C.now+86400000)?'Holnap':MN[d.getMonth()]+' '+d.getDate()+'. '+WD[d.getDay()];
-    return '<div class="card"><b>'+lab+'</b>'+days[k].map(function(e){return '<div class="row" style="margin-top:8px"><span>'+esc(e.t)+(e.loc?'<br><small class="mut">'+esc(e.loc)+'</small>':'')+'</span><span class="mut">'+evRt(e)+'</span></div>'}).join('')+'</div>'}).join('');
+    return '<div class="card"><b>'+lab+'</b>'+days[k].map(function(e){return '<div class="row'+(isRedEv(e)?' evr':'')+'" style="margin-top:8px"><span>'+esc(e.t)+(e.loc?'<br><small class="mut">'+esc(e.loc)+'</small>':'')+'</span><span class="mut">'+evRt(e)+'</span></div>'}).join('')+'</div>'}).join('');
 }
 var CO=0,CD=null;
 function pad2(n){return ('0'+n).slice(-2)}
 function calNav(n){CO=n===0?0:CO+n;var nw=new Date(C.now),f=new Date(nw.getFullYear(),nw.getMonth()+CO,1);CD=CO===0?dk(C.now):f.getFullYear()+'-'+pad2(f.getMonth()+1)+'-01';render()}
 function calSel(k){CD=k;render()}
+function isRedEv(e){var m=/^#([0-9a-f]{6})$/i.exec(e.col||'');if(!m)return false;var n=parseInt(m[1],16);return (n>>16)>=190&&((n>>8)&255)<=70&&(n&255)<=70}
 function calCol(e){return e.col||(/csal/i.test(e.cal)?'var(--warn)':'var(--acc)')} function calTx(c){var m=/^#([0-9a-f]{6})$/i.exec(c||'');if(!m)return '#fff';var n=parseInt(m[1],16),l=(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255));return l>170?'#1f2522':'#fff'}
 function rCal(){
   if(!C)return err('C');
