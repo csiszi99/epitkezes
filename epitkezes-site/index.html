@@ -164,6 +164,8 @@ body.mini main:active{transform:scale(.985)}body.mini main.go{transform:scale(.9
 @media(min-width:1000px){.fgrid{grid-template-columns:minmax(0,2fr) minmax(0,2.35fr) minmax(0,1fr) minmax(0,2.6fr)}.fgrid .kpis.k1{grid-template-columns:1fr}}
 .trend{position:relative}.tavg{position:absolute;left:0;top:10px;width:100%;height:100px;pointer-events:none}.tavg svg{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible}.tavg u{position:absolute;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;background:#e5484d;box-shadow:0 0 0 2px var(--card)}
 @media(min-width:1000px){.tavg{height:240px}.fgrid .tavg{height:150px}}
+body.mini main::before{transition:--p .8s cubic-bezier(.3,.7,.3,1),padding .25s}body.mini main:hover::before,body.mini main.go::before{padding:4px}
+body.mini.fl{padding:0}body.mini.fl main{max-width:none;margin:0}body.mini.fl main::before{inset:0}
 </style>
 </head>
 <body>
@@ -294,11 +296,11 @@ function rMini(){
   h+='<div class="mf"><span class="hint">Kattints a megnyitáshoz ↗</span><small>frissítve: '+esc($('#sync').textContent)+'</small></div></div>';
   $('#v').innerHTML=h}
 if(MINI)setInterval(render,30000);
-function fitMini(){try{var m=document.querySelector('main');if(!m||!m.offsetHeight)return;window.resizeTo(376+(outerWidth-innerWidth),m.offsetHeight+14+(outerHeight-innerHeight))}catch(e){}}
-if(MINI){[1200,3500,7000].forEach(function(t){setTimeout(fitMini,t)})}
+function fitMini(){try{var m=document.querySelector('main');if(!m||!m.offsetHeight)return;var fl=(outerHeight-innerHeight)<4&&(outerWidth-innerWidth)<4&&!document.fullscreenElement;document.body.classList.toggle('fl',fl);var h=m.offsetHeight+(fl?0:14);document.title='Építkezés – Mini ['+h+']';window.resizeTo(376+(outerWidth-innerWidth),h+(outerHeight-innerHeight))}catch(e){}}
+if(MINI){setTimeout(fitMini,800);setInterval(fitMini,1500)}
 function openFull(){var w=null;try{w=window.open(location.pathname+'?full=1','epitkezes_full')}catch(e){}if(!w)location.href=location.pathname}
 if(MINI){var mv=$('#v');mv.addEventListener('pointerenter',function(e){var r=mv.getBoundingClientRect();mv.style.setProperty('--a',(Math.atan2(e.clientX-(r.left+r.width/2),-(e.clientY-(r.top+r.height/2)))*180/Math.PI)+'deg')});
-  mv.addEventListener('click',function(){mv.classList.add('go');setTimeout(function(){mv.classList.remove('go');openFull()},380)})}
+  mv.addEventListener('click',function(e){if(e.shiftKey)return;mv.classList.add('go');setTimeout(function(){mv.classList.remove('go');openFull()},380)})}
 if(/[?&]full/.test(location.search)&&window.opener){try{window.moveTo(0,0);window.resizeTo(screen.availWidth,screen.availHeight)}catch(e){}}
 function hgo(el,k){el.classList.add('go');setTimeout(function(){goSec(k)},320)}
 function sh(t,k){return '<h2 class="shh" onclick="hgo(this,\''+k+'\')" style="cursor:pointer;padding:2px 0"><span class="sht">'+t+'</span></h2>'}
