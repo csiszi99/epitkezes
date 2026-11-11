@@ -169,7 +169,7 @@ function gotCred(r){TOK=r.credential;TEXP=jwtExp(TOK);try{localStorage.setItem('
   var b=$('#lg');if(b)b.remove();var w=WAIT;WAIT=[];w.forEach(function(f){f()})}
 function gsiInit(){
   if(GSI||!window.google||!google.accounts){return false}
-  GSI=1;google.accounts.id.initialize({client_id:CLIENT_ID,callback:gotCred,auto_select:true,cancel_on_tap_outside:false,use_fedcm_for_prompt:true});return true}
+  GSI=1;google.accounts.id.initialize({client_id:CLIENT_ID,callback:gotCred,cancel_on_tap_outside:false});return true}
 function showLogin(){
   if($('#lg'))return;var d=document.createElement('div');d.id='lg';
   d.style.cssText='position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;text-align:center';
@@ -179,7 +179,7 @@ function showLogin(){
 function ensureTok(cb){
   if(TOK&&TEXP>Date.now()/1000+60)return cb();
   TOK=null;WAIT.push(cb);showLogin();
-  var t=setInterval(function(){if(gsiInit()||GSI){clearInterval(t);try{google.accounts.id.prompt()}catch(e){}}},150)}
+  var t=setInterval(function(){if(gsiInit()||GSI){clearInterval(t);if(!window.PR){window.PR=1;try{google.accounts.id.prompt()}catch(e){}}}},150)}
 function srv(fn,args){return new Promise(function(res,rej){ensureTok(function(){
   fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({t:TOK,fn:fn,a:args||[]})})
   .then(function(r){return r.json()}).then(function(j){
@@ -197,7 +197,12 @@ function loadAll(){
 }
 function reloadD(){srv('getData').then(function(x){D=x;ERR.D='';render()}).catch(function(e){ERR.D=e.message;render()})}
 function call(fn){var a=[].slice.call(arguments,1);srv(fn,a).then(function(){toast('Mentve');reloadD()}).catch(function(e){toast('Hiba: '+e.message)})}
-function goSec(s){SEC=s;render();window.scrollTo(0,0)}
+try{history.replaceState({s:'home'},'')}catch(e){}
+function goSec(s){
+  if(s=='home'&&SEC!='home'&&history.state&&history.state.s!='home'){history.back();return}
+  if(s!=SEC&&s!='home'){try{history.pushState({s:s},'')}catch(e){}}
+  SEC=s;render();window.scrollTo(0,0)}
+window.addEventListener('popstate',function(e){SEC=(e.state&&e.state.s)||'home';render();window.scrollTo(0,0)});
 function setSub(s){SUB=s;render()}
 function setHY(y){HYEAR=y;render()}
 function setP(p){PERSON=p;render()}
