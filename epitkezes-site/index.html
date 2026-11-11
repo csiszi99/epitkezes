@@ -146,10 +146,11 @@ body.mini main{max-width:400px;margin:0 auto;padding:16px 12px 10px}
 .mn .ev i{width:9px;height:9px;border-radius:50%;flex:none}
 .mn .ev span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mn .ev small{flex:none;font-size:12px;text-align:right}
-.mn .st{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto repeat(3,auto);gap:8px;margin-top:14px}
-.mn .col{grid-row:span 4;display:grid;grid-template-rows:subgrid;padding:8px 6px 6px;border:1px solid var(--line);border-radius:14px;min-width:0}
-.mn .col h4{margin:0 3px;font-size:11px;line-height:1.2;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);font-weight:600}
-.mn .col>div{background:var(--card);border-radius:10px;padding:7px 8px;display:flex;flex-direction:column;min-width:0}
+.mn .st{display:grid;gap:8px;margin-top:14px}
+.mn .col{padding:8px 6px 6px;border:1px solid var(--line);border-radius:14px;min-width:0}
+.mn .col h4{margin:0 3px 6px;font-size:11px;line-height:1.2;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);font-weight:600}
+.mn .cells{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.mn .cells>div{background:var(--card);border-radius:10px;padding:7px 8px;display:flex;flex-direction:column;min-width:0}
 .mn .st small{display:block;font-size:11px;line-height:1.25}
 .mn .st b{display:block;font-size:15px;margin-top:auto;padding-top:4px;white-space:nowrap}.mn .st b.sm{font-size:13px;white-space:normal;line-height:1.25}
 .mn .mf{text-align:right;margin-top:12px}.mn .mf small{font-size:10px}
@@ -266,7 +267,7 @@ var RZ=null;window.addEventListener('resize',function(){clearTimeout(RZ);RZ=setT
 
 function mErr(k){return ERR[k]?'<small class="late">Hiba: '+esc(ERR[k])+'</small>':'<small>Betöltés…</small>'}
 function mTile(l,v,neg,sub,cls){return '<div><small>'+l+'</small><b class="'+(neg?'late ':'')+(cls||'')+'">'+v+'</b>'+(sub?'<small>'+sub+'</small>':'')+'</div>'}
-function mCol(t,c){return '<div class="col"><h4>'+t+'</h4>'+c.join('')+'</div>'}
+function mCol(t,c){return '<div class="col"><h4>'+t+'</h4><div class="cells">'+c.join('')+'</div></div>'}
 function rMini(){
   document.body.className='mini';document.title='Építkezés – Mini';
   var now=new Date(),t0=now.getTime(),yr=now.getFullYear(),h='<div class="mn"><h3 style="margin-top:2px">Közelgő</h3>';
@@ -281,7 +282,7 @@ function rMini(){
   if(F){try{var m=famPrev(),t=fSum('Mind',m.ym),bal=t.inc-t.exp,Y=fSum('Mind','Y'+yr);ms=(t.inc?Math.round(bal/t.inc*100):0)+'%';mn=MN[+m.ym.slice(5,7)-1];sc=ftm(Y.inc-Y.exp)+' Ft';sn=Y.inc-Y.exp<0}catch(e){}}
   h+='<div class="st">'+mCol('Munkaórák',[mTile('Óraegyenleg',oe,hn),mTile('Kivehető szabadságok',kv),mTile('Következő szabadság',lv,0,'','sm')])
     +mCol('Építkezés',[mTile('Bankhoz leadva',sent),mTile('Mérföldkövek',mk),mTile('Banknak el nem küldött számlák',uns)])
-    +mCol('Pénzügyek',[mTile('Hátralévő tőke',tok,0,'banki tartozás'),mTile('Havi megtakarítás',ms,0,mn),mTile('Megtakarítás '+yr+' eleje óta',sc,sn)])+'</div>';
+    +mCol('Pénzügyek',[mTile('Hátralévő tőke',tok),mTile('Előző havi megtakarítás',ms,0,mn),mTile('Megtakarítás '+yr+' eleje óta',sc,sn)])+'</div>';
   h+='<div class="mf"><small>frissítve: '+esc($('#sync').textContent)+'</small></div></div>';
   $('#v').innerHTML=h}
 if(MINI)setInterval(render,30000);
