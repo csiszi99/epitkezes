@@ -592,7 +592,7 @@ function evRt(e){var a=new Date(dk(e.s)+'T12:00:00'),b=new Date(dk(e.all?e.e-864
 var EVN=0;
 function fitEv(){
   if(window.innerWidth<1000||!C||MINI)return;
-  var l=document.getElementById('evl');if(!l)return;var p=l.parentNode,n=40;
+  var l=document.getElementById('evl');if(!l)return;var p=l,n=40;
   l.innerHTML=evList(n);
   while(n>1&&p.scrollHeight>p.clientHeight+1){n--;l.innerHTML=evList(n)}
   if(n!=EVN&&D&&D.cfg&&Number(D.cfg.evn)!=n){EVN=n;var had=D.cfg.evn!==undefined;D.cfg.evn=String(n);
