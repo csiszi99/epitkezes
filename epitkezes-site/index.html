@@ -137,7 +137,7 @@ details.mo>div{padding:0 14px 12px}
 @media(min-width:1000px){body.home .hgrid h2,body.home .fam h2{margin-top:6px;margin-bottom:6px}body.home .kpis{gap:8px;margin-bottom:8px}body.home .hgrid .kpi,body.home .fam .kpi{padding:8px 12px}body.home .card.msc{padding-top:8px;padding-bottom:8px}.hgrid{margin-bottom:8px!important}.dleg div{padding:1px 0!important}}@media(min-width:1000px){body.home{padding-bottom:0!important}body.home .fam{margin-bottom:0!important}body.home .fgrid{margin-bottom:0!important}}
 body.mini{--bg:#121614;--card:#1b211e;--ink:#eceae4;--mut:#9aa39e;--line:#303733;--acc:#5fb59e;--warn:#e0954d;color-scheme:dark;padding:0;overflow-x:hidden}
 body.mini header,body.mini #cm{display:none}
-body.mini main{max-width:none;padding:14px 16px 10px}
+body.mini main{max-width:380px;margin:0 auto;padding:16px 16px 10px}
 .mn .mt{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 .mn .mt b{font-size:42px;font-weight:300;letter-spacing:-.02em;line-height:1.05}
 .mn .mt small{font-size:14px;text-align:right}
@@ -146,13 +146,10 @@ body.mini main{max-width:none;padding:14px 16px 10px}
 .mn .ev i{width:9px;height:9px;border-radius:50%;flex:none}
 .mn .ev span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mn .ev small{flex:none;font-size:12px;text-align:right}
-.mn .st{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.mn .st.s2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.mn .st{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}
 .mn .st>div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
 .mn .st small{display:block;font-size:11px;line-height:1.25}
-.mn .st b{display:block;font-size:17px;margin-top:2px;white-space:nowrap}
-.mn .st b.sm{font-size:14px;white-space:normal;line-height:1.25}
-.mn .st .bar{margin:6px 0 4px;height:6px}
+.mn .st b{display:block;font-size:15px;margin-top:3px;white-space:nowrap}
 .mn .mf{text-align:right;margin-top:12px}.mn .mf small{font-size:10px}</style>
 </head>
 <body>
@@ -262,24 +259,20 @@ function fitEv(){var box=document.getElementById('evl'),hk=document.getElementBy
 var RZ=null;window.addEventListener('resize',function(){clearTimeout(RZ);RZ=setTimeout(function(){if(SEC=='home'||MINI)render()},200)});
 
 function mErr(k){return ERR[k]?'<small class="late">Hiba: '+esc(ERR[k])+'</small>':'<small>Betöltés…</small>'}
+function mTile(l,v,neg){return '<div><small>'+l+'</small><b class="'+(neg?'late':'')+'">'+v+'</b></div>'}
 function rMini(){
   document.body.className='mini';document.title='Építkezés – Mini';
   var now=new Date(),t0=now.getTime(),ps=function(x){return ('0'+x).slice(-2)},
   h='<div class="mn"><div class="mt"><b>'+ps(now.getHours())+':'+ps(now.getMinutes())+'</b><small>'+MN[now.getMonth()]+' '+now.getDate()+'., '+WD[now.getDay()]+'</small></div><h3>Közelgő</h3>';
   if(!C)h+=mErr('C');else{
-    var n=Math.max(3,Math.min(10,Math.floor((window.innerHeight-470)/30))),ev=C.events.filter(function(e){return e.e>t0}).slice(0,n),tk=dk(t0),tm=dk(t0+86400000);
+    var ev=C.events.filter(function(e){return e.e>t0}).slice(0,4),tk=dk(t0),tm=dk(t0+86400000);
     h+=ev.length?ev.map(function(e){var k=dk(Math.max(e.s,t0)),d=new Date(k+'T12:00:00'),r=evRt(e),lab=k==tk?'Ma':k==tm?'Holnap':MN[d.getMonth()].slice(0,3)+'. '+d.getDate()+'.';
       return '<div class="ev"><i style="background:'+calCol(e)+'"></i><span>'+esc(e.t)+'</span><small>'+(r.indexOf('–')>0?r:lab+' · '+r)+'</small></div>'}).join(''):'<small>Nincs közelgő esemény.</small>'}
-  h+='<h3>Munkaórák</h3>';
-  if(!H)h+=mErr('H');else{var S=H.y[H.cur].summary,nx=nextLeave(H.cur),on=nx&&nx.s<=td0(),lv=nx?(on?'Most szabin':rng(nx)):'—';
-    h+='<div class="st"><div><small>Óraegyenleg</small><b class="'+(num(S[1][1])<0?'late':'')+'">'+esc(S[1][1])+' ó</b></div><div><small>Kivehető szabi</small><b>'+esc(S[2][1])+' nap</b></div><div><small>Köv. szabadság</small><b class="sm">'+lv+'</b></div></div>'}
-  h+='<h3>Építkezés</h3>';
-  if(!D)h+=mErr('D');else{var s=stats();
-    h+='<div class="st s2"><div><small>Összes számla</small><b>'+ft(s.all)+'</b>'+bar(s.pct)+'<small>keret: '+ft(s.budget)+'</small></div><div><small>Banknak leadva</small><b>'+s.sentPct.toFixed(1)+'%</b>'+bar(s.sentPct)+'<small>'+ft(s.sent)+'</small></div></div>'}
-  var m=F&&famPrev();
-  h+='<h3>Család'+(m?' · '+esc(m.label):'')+'</h3>';
-  if(!F)h+=mErr('F');else if(m){var t=fSum('Mind',m.ym),bal=t.inc-t.exp;
-    h+='<div class="st s2"><div><small>Egyenleg</small><b class="'+(bal<0?'late':'')+'">'+ft(bal)+'</b><small>bevétel: '+ft(t.inc)+'</small></div><div><small>Megtakarítás</small><b>'+(t.inc?Math.round(bal/t.inc*100):0)+'%</b><small>kiadás: '+ft(t.exp)+'</small></div></div>'}
+  var oe='…',bk='…',fb='…',fn=false,hn=false;
+  if(H){try{var S=H.y[H.cur].summary;oe=esc(S[1][1])+' ó';hn=num(S[1][1])<0}catch(e){}}
+  if(D){try{bk=stats().sentPct.toFixed(0)+'%'}catch(e){}}
+  if(F){try{var m=famPrev(),t=fSum('Mind',m.ym),bal=t.inc-t.exp;fb=ft(bal);fn=bal<0}catch(e){}}
+  h+='<div class="st">'+mTile('Óraegyenleg',oe,hn)+mTile('Bankhoz leadva',bk)+mTile('Családi egyenleg',fb,fn)+'</div>';
   h+='<div class="mf"><small>frissítve: '+esc($('#sync').textContent)+'</small></div></div>';
   $('#v').innerHTML=h}
 if(MINI)setInterval(render,30000);
