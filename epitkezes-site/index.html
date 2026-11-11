@@ -530,7 +530,7 @@ var CO=0,CD=null;
 function pad2(n){return ('0'+n).slice(-2)}
 function calNav(n){CO=n===0?0:CO+n;var nw=new Date(C.now),f=new Date(nw.getFullYear(),nw.getMonth()+CO,1);CD=CO===0?dk(C.now):f.getFullYear()+'-'+pad2(f.getMonth()+1)+'-01';render()}
 function calSel(k){CD=k;render()}
-function calCol(e){return /csal/i.test(e.cal)?'var(--warn)':'var(--acc)'}
+function calCol(e){return e.col||(/csal/i.test(e.cal)?'var(--warn)':'var(--acc)')} function calTx(c){var m=/^#([0-9a-f]{6})$/i.exec(c||'');if(!m)return '#fff';var n=parseInt(m[1],16),l=(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255));return l>170?'#1f2522':'#fff'}
 function rCal(){
   if(!C)return err('C');
   var nw=new Date(C.now);
@@ -545,7 +545,7 @@ function rCal(){
     for(var i=0;i<off;i++)h+='<div class="cc e"></div>';
     for(var d=1;d<=nd;d++){var k=Y+'-'+pad2(M+1)+'-'+pad2(d),ev=by[k]||[];
       h+='<div class="cc'+(k==tk?' td':'')+(k==CD?' sel':'')+(k<tk?' pa':'')+'" onclick="calSel(\''+k+'\')"><span class="cn">'+d+'</span>'+
-      ev.slice(0,3).map(function(e){return '<div class="ct" style="background:'+calCol(e)+'">'+(e.all?'':hm(e.s)+' ')+esc(e.t)+'</div>'}).join('')+(ev.length>3?'<div class="ct" style="background:var(--mut)">+'+(ev.length-3)+' további</div>':'')+
+      ev.slice(0,3).map(function(e){return '<div class="ct" style="background:'+calCol(e)+';color:'+calTx(calCol(e))+'">'+(e.all?'':hm(e.s)+' ')+esc(e.t)+'</div>'}).join('')+(ev.length>3?'<div class="ct" style="background:var(--mut)">+'+(ev.length-3)+' további</div>':'')+
       '<div class="cdots">'+ev.slice(0,4).map(function(e){return '<i style="background:'+calCol(e)+'"></i>'}).join('')+'</div></div>'}
     h+='</div></div>'});
   h+='</div>';
