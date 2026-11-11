@@ -602,7 +602,7 @@ function fitEv(){
 var _rz;window.addEventListener('resize',function(){clearTimeout(_rz);_rz=setTimeout(function(){if(SEC=='home')fitEv()},400)});
 function evList(max){
   var ev=C.events.filter(function(e){return e.e>C.now}),days={},order=[];
-  if(max)ev=ev.slice(0,max);
+  if(max){var all=ev;ev=all.slice(0,max);all.slice(max).forEach(function(e){if(isRedEv(e)&&e.s<C.now+45*86400000)ev.push(e)})}
   if(!ev.length)return '<div class="card mut">Nincs közelgő esemény.</div>';
   ev.forEach(function(e){var k=dk(Math.max(e.s,C.now));if(!days[k]){days[k]=[];order.push(k)}days[k].push(e)});
   return order.map(function(k){var d=new Date(k+'T12:00:00'),lab=k==dk(C.now)?'Ma':k==dk(C.now+86400000)?'Holnap':MN[d.getMonth()]+' '+d.getDate()+'. '+WD[d.getDay()];
