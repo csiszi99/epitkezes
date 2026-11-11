@@ -267,6 +267,7 @@ function render(){
   document.body.className=SEC=='home'?'home':'';$('#ttl').textContent=T[SEC];$('#back').style.display=SEC=='home'?'none':'inline-flex';
   $('#v').innerHTML=SEC=='home'?rHome():SEC=='build'?rBuild():SEC=='hours'?rHours():SEC=='cal'?rCal():rFam();
   var tr=$('.trend');if(tr)tr.scrollLeft=99999;
+  if(SEC=='home')fitEv();
   fitEv();fitHome()
 }
 function fitHome(){document.body.style.zoom='';if(SEC!='home'||window.innerWidth<1000)return;var f=document.querySelector('.fam'),hb=f?f.getBoundingClientRect().bottom+window.scrollY+6:document.documentElement.scrollHeight;var z=Math.max(.62,Math.min(1,window.innerHeight/Math.min(hb,document.documentElement.scrollHeight)));if(z<1)document.body.style.zoom=z}
@@ -309,7 +310,7 @@ function hgo(el,k){el.classList.add('go');setTimeout(function(){goSec(k)},320)}
 function sh(t,k){return '<h2 class="shh" onclick="hgo(this,\''+k+'\')" style="cursor:pointer;padding:2px 0"><span class="sht">'+t+'</span></h2>'}
 function rHome(){
   var h='<div class="hgrid"><div class="lcol grp">'+sh('Közelgő','cal');
-  if(!C)h+=err('C');else h+='<div id="evl">'+evList(window.innerWidth>=1000?20:5)+'</div>';
+  if(!C)h+=err('C');else h+='<div id="evl">'+evList(window.innerWidth>=1000?40:(D&&D.cfg&&Number(D.cfg.evn))||5)+'</div>';
   h+='</div><div><div class="grp">'+sh('Építkezés','build');
   if(!D)h+=err('D');else{var s=stats(),open=D.Teendok.filter(function(t){return !t.Kész}).length;
     h+='<div class="kpis k2">'+kpi('Összes számla',ft(s.all),'','keret: '+ft(s.budget))+catKpi()+kpi('Banknak leadott számlák',s.sentPct.toFixed(1)+'%',barMk(s.sentPct),ft(s.sent))+'</div>'}
@@ -588,6 +589,17 @@ function dk(t){var d=new Date(t);return d.getFullYear()+'-'+('0'+(d.getMonth()+1
 function hm(t){var d=new Date(t);return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)}
 var WD=['vasárnap','hétfő','kedd','szerda','csütörtök','péntek','szombat'];
 function evRt(e){var a=new Date(dk(e.s)+'T12:00:00'),b=new Date(dk(e.all?e.e-86400000:e.e)+'T12:00:00');if(b.getTime()>a.getTime())return rng({s:a,e:b});return e.all?'egész nap':hm(e.s)}
+var EVN=0;
+function fitEv(){
+  if(window.innerWidth<1000||!C||MINI)return;
+  var l=document.getElementById('evl');if(!l)return;var p=l.parentNode,n=40;
+  l.innerHTML=evList(n);
+  while(n>1&&p.scrollHeight>p.clientHeight+1){n--;l.innerHTML=evList(n)}
+  if(n!=EVN&&D&&D.cfg&&Number(D.cfg.evn)!=n){EVN=n;var had=D.cfg.evn!==undefined;D.cfg.evn=String(n);
+    var q=had?['updateRow',['Beallitasok','evn',{'érték':String(n)}]]:['addRow',['Beallitasok',{kulcs:'evn','érték':String(n)}]];
+    try{srv(q[0],q[1]).catch(function(){})}catch(x){}}
+}
+var _rz;window.addEventListener('resize',function(){clearTimeout(_rz);_rz=setTimeout(function(){if(SEC=='home')fitEv()},400)});
 function evList(max){
   var ev=C.events.filter(function(e){return e.e>C.now}),days={},order=[];
   if(max)ev=ev.slice(0,max);
