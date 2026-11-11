@@ -137,7 +137,7 @@ details.mo>div{padding:0 14px 12px}
 @media(min-width:1000px){body.home .hgrid h2,body.home .fam h2{margin-top:6px;margin-bottom:6px}body.home .kpis{gap:8px;margin-bottom:8px}body.home .hgrid .kpi,body.home .fam .kpi{padding:8px 12px}body.home .card.msc{padding-top:8px;padding-bottom:8px}.hgrid{margin-bottom:8px!important}.dleg div{padding:1px 0!important}}@media(min-width:1000px){body.home{padding-bottom:0!important}body.home .fam{margin-bottom:0!important}body.home .fgrid{margin-bottom:0!important}}
 body.mini{--bg:#121614;--card:#1b211e;--ink:#eceae4;--mut:#9aa39e;--line:#303733;--acc:#5fb59e;--warn:#e0954d;color-scheme:dark;padding:0;overflow-x:hidden}
 body.mini header,body.mini #cm{display:none}
-body.mini main{max-width:400px;margin:0 auto;padding:16px 12px 10px}
+body.mini main{max-width:360px;margin:0 auto;padding:12px 10px 8px}
 .mn .mt{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 .mn .mt b{font-size:42px;font-weight:300;letter-spacing:-.02em;line-height:1.05}
 .mn .mt small{font-size:14px;text-align:right}
@@ -148,11 +148,11 @@ body.mini main{max-width:400px;margin:0 auto;padding:16px 12px 10px}
 .mn .ev small{flex:none;font-size:12px;text-align:right}
 .mn .st{display:grid;gap:8px;margin-top:8px}
 .mn .col>.ev{padding:4px 4px}.mn .col>small{display:block;padding:2px 4px}
-.mn .col{padding:8px 6px 6px;border:1px solid var(--line);border-radius:14px;min-width:0}
+.mn .col{padding:7px 5px 5px;border:1px solid var(--line);border-radius:14px;min-width:0}
 .mn .col h4{margin:0 3px 6px;font-size:11px;line-height:1.2;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);font-weight:600}
-.mn .cells{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.mn .cells>div{background:var(--card);border-radius:10px;padding:7px 8px;display:flex;flex-direction:column;min-width:0}
-.mn .st small{display:block;font-size:11px;line-height:1.25}
+.mn .cells{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.mn .cells>div{background:var(--card);border-radius:10px;padding:6px 7px;display:flex;flex-direction:column;min-width:0}
+.mn .st small{display:block;font-size:10.5px;line-height:1.25}
 .mn .st b{display:block;font-size:15px;margin-top:auto;padding-top:4px;white-space:nowrap}.mn .st b.sm{font-size:13px;white-space:normal;line-height:1.25}
 .mn .mf{text-align:right;margin-top:12px}.mn .mf small{font-size:10px}
 @media(min-width:1000px){.fgrid{grid-template-columns:minmax(0,2fr) minmax(0,2.35fr) minmax(0,1fr) minmax(0,2.6fr)}.fgrid .kpis.k1{grid-template-columns:1fr}}
@@ -282,9 +282,9 @@ function rMini(){
   if(D){try{sent=stats().sentPct.toFixed(0)+'%';uns=D.Koltsegek.filter(function(r){return !r['Készpénz']&&!r['Bankhoz elküldve']}).length+' db';var MK=D.Merfoldkovek.filter(function(r){return r.Típus=='Megvalósítás'});if(!MK.length)MK=D.Merfoldkovek;mk=MK.filter(function(r){return r.Kész}).length+' / '+MK.length}catch(e){}}
   if(L){try{var mm=/Hátralévő tőke<\/small><b[^>]*>([^<]*)</.exec(rLoans());if(mm){var tv=num(mm[1]);tok=(tv?ftm(tv):'0')+' Ft'}}catch(e){}}
   if(F){try{var m=famPrev(),t=fSum('Mind',m.ym),bal=t.inc-t.exp,Y=fSum('Mind','Y'+yr);ms=(t.inc?Math.round(bal/t.inc*100):0)+'%';mn=MN[+m.ym.slice(5,7)-1];sc=ftm(Y.inc-Y.exp)+' Ft';sn=Y.inc-Y.exp<0}catch(e){}}
-  h+='<div class="st">'+mCol('Munkaórák',[mTile('Óraegyenleg',oe,hn),mTile('Kivehető szabadságok',kv),mTile('Következő szabadság',lv,0,'','sm')])
-    +mCol('Építkezés',[mTile('Bankhoz leadva',sent),mTile('Mérföldkövek',mk),mTile('Banknak el nem küldött számlák',uns)])
-    +mCol('Pénzügyek',[mTile('Hátralévő tőke',tok),mTile('Előző havi megtakarítás',ms),mTile('Megtakarítás '+yr+' eleje óta',sc,sn)])+'</div>';
+  h+='<div class="st">'+mCol('Munkaórák',[mTile('Óraegyenleg',oe,hn),mTile('Kivehető szabik',kv),mTile('Következő szabi',lv,0,'','sm')])
+    +mCol('Építkezés',[mTile('Bankhoz leadott számlák',sent),mTile('Mérföldkövek',mk),mTile('Banknak el nem küldött számlák',uns)])
+    +mCol('Pénzügyek',[mTile('Fennálló hiteltartozás',tok),mTile('Előző havi megtakarítás',ms),mTile('Megtakarítás '+yr+' eleje óta',sc,sn)])+'</div>';
   h+='<div class="mf"><small>frissítve: '+esc($('#sync').textContent)+'</small></div></div>';
   $('#v').innerHTML=h}
 if(MINI)setInterval(render,30000);
