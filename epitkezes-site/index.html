@@ -262,7 +262,7 @@ function stats(){
 }
 function fMonths(){var m={};F.rows.forEach(function(r){m[r[0]]=r[1]});return Object.keys(m).sort().map(function(k){return{ym:k,label:k.slice(0,4)+' - '+MN[+k.slice(5,7)-1]}})}
 function fIn(d,s){return s=='ALL'||(s.charAt(0)=='Y'?d.slice(0,4)==s.slice(1):d==s)}
-function fSum(person,ym){var inc=0,exp=0;F.rows.forEach(function(r){if(ym&&!fIn(r[0],ym))return;if(person!='Mind'&&r[2]!=person)return;var t=F.types[r[3]]||(r[4]>0?'bevétel':'kiadás');if(t=='belső')return;if(t=='bevétel')inc+=r[4];else exp-=r[4]});return{inc:inc,exp:exp}}
+function fSum(person,ym){var inc=0,exp=0;F.rows.forEach(function(r){if(ym&&!fIn(r[0],ym))return;if(person!='Mind'&&r[2]!=person)return;var t=F.types[r[3]]||(r[4]>0?'bevétel':'kiadás');if(t=='belső')return;if(r[4]>0)inc+=r[4];else exp-=r[4]});return{inc:inc,exp:exp}}
 
 function render(){
   if(MINI){rMini();return}
@@ -341,7 +341,7 @@ function msKpi(){var L=D.Merfoldkovek.filter(function(r){return r.Típus=='Megva
 function msCard(){if(!D)return '';return '<div class="card dk msc"><b>Mérföldkövek</b>'+msGroup('Megvalósítás','Megvalósítás')+msGroup('Banki','Banki (hitelfolyósítás)')+'</div>'}
 function famPrev(){var ms=fMonths(),d=new Date();d.setDate(1);d.setMonth(d.getMonth()-1);var ym=d.getFullYear()+'.'+('0'+(d.getMonth()+1)).slice(-2),c=ms.filter(function(x){return x.ym<=ym});return c.length?c[c.length-1]:ms[ms.length-1]}
 var DPAL=['#5fb59e','#e0954d','#6f9bd4','#c97ab2','#d6c35a','#8a7fd1','#d8645f','#7bc47f','#8d9792'];
-function donutCard(ym){var cats={},tot=0;F.rows.forEach(function(r){if(r[0]!=ym)return;var ty=F.types[r[3]]||(r[4]>0?'bevétel':'kiadás');if(ty!='kiadás')return;cats[r[3]]=(cats[r[3]]||0)-r[4];tot-=r[4]});
+function donutCard(ym){var cats={},tot=0;F.rows.forEach(function(r){if(r[0]!=ym)return;var ty=F.types[r[3]]||(r[4]>0?'bevétel':'kiadás');if(ty!='kiadás'||r[4]>=0)return;cats[r[3]]=(cats[r[3]]||0)-r[4];tot-=r[4]});
   var ks=Object.keys(cats).filter(function(k){return cats[k]>0}).sort(function(a,b){return cats[b]-cats[a]});
   if(!ks.length)return '<div class="card"><b>Kiadások kategóriánként</b><div class="mut">Nincs kiadás.</div></div>';
   var L=ks.slice(0,8).map(function(k){return[k,cats[k]]});if(ks.length>8)L.push(['Egyéb',ks.slice(8).reduce(function(s,k){return s+cats[k]},0)]);
@@ -491,7 +491,7 @@ function rFam(){
   var t=fSum(PERSON,FM),bal=t.inc-t.exp;
   var K='<div class="kpis">'+kpi('Bevétel',ft(t.inc))+kpi('Kiadás',ft(t.exp))+kpi('Egyenleg',ft(bal),'','',bal<0)+kpi('Megtakarítás',(t.inc?Math.round(bal/t.inc*100):0)+'%')+'</div>';
   var cats={};
-  F.rows.forEach(function(r){if(!fIn(r[0],FM))return;if(PERSON!='Mind'&&r[2]!=PERSON)return;var ty=F.types[r[3]]||(r[4]>0?'bevétel':'kiadás');if(ty!='kiadás')return;cats[r[3]]=(cats[r[3]]||0)-r[4]});
+  F.rows.forEach(function(r){if(!fIn(r[0],FM))return;if(PERSON!='Mind'&&r[2]!=PERSON)return;var ty=F.types[r[3]]||(r[4]>0?'bevétel':'kiadás');if(ty!='kiadás'||r[4]>=0)return;cats[r[3]]=(cats[r[3]]||0)-r[4]});
   var keys=Object.keys(cats).filter(function(k){return cats[k]>0}).sort(function(a,b){return cats[b]-cats[a]}),mx=keys.length?cats[keys[0]]:1;
   var C='<div class="card fcat"><b>Kiadások kategóriánként</b>'+(keys.length?keys.map(function(k){return '<div style="margin-top:10px"><div class="row"><span>'+esc(k)+'</span><span>'+ft(cats[k])+'</span></div>'+bar(cats[k]/mx*100)+'</div>'}).join(''):'<div class="mut">Nincs kiadás.</div>')+'</div>';
   var yrs=[];
