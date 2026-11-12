@@ -323,8 +323,8 @@ function rHome(){
     h+='<div class="kpis kh" id="hrk">'+kpi('Óraegyenleg',esc(S[1][1])+' ó','','',num(S[1][1])<0)+kpi('Még kivehető szabadság',esc(S[2][1])+' nap')+kpi('Következő szabadság',lv,'',nx?(nx.n+' munkanap'+(on?', eddig: '+dfmt(nx.e):'')):'')+kpi('Naptári hét',isoWeek(new Date())+'. hét','',wkRange())+'</div>'}
   h+='</div></div></div><div class="fam grp">'+sh('Családi költségvetés','fam');
   if(!F)h+=err('F');else{var m=famPrev(),t=fSum('Mind',m.ym),bal=t.inc-t.exp,PA=fSum('Patri',m.ym),CS=fSum('Csiszi',m.ym),pp=function(f){return 'Patri: '+f(PA)+'<br>Csiszi: '+f(CS)},sv=function(x){return x.inc?Math.round((x.inc-x.exp)/x.inc*100)+'%':'0%'},K=kpi('Bevétel',ft(t.inc),'',pp(function(x){return ft(x.inc)}))+kpi('Kiadás',ft(t.exp),'',pp(function(x){return ft(x.exp)}))+kpi('Egyenleg',ft(bal),'',pp(function(x){return ft(x.inc-x.exp)}),bal<0)+kpi('Megtakarítás',(t.inc?Math.round(bal/t.inc*100):0)+'%','',pp(sv));
-    var TA=fSum('Mind','ALL'),PA2=fSum('Patri','ALL'),CS2=fSum('Csiszi','ALL'),bA=TA.inc-TA.exp,pp2=function(f){return 'Patri: '+f(PA2)+'<br>Csiszi: '+f(CS2)},
-      K2=kpi('Összes egyenleg',ft(bA),'',pp2(function(x){return ft(x.inc-x.exp)}),bA<0)+kpi('Összes megtakarítás',(TA.inc?Math.round(bA/TA.inc*100):0)+'%','',pp2(sv));
+    var AL=F.all,TA=fSum('Mind','ALL'),PA2=(AL&&AL.per&&AL.per.Patri)||fSum('Patri','ALL'),CS2=(AL&&AL.per&&AL.per.Csiszi)||fSum('Csiszi','ALL'),bA=AL&&AL.bal!=null?+AL.bal:TA.inc-TA.exp,pp2=function(f){return 'Patri: '+f(PA2)+'<br>Csiszi: '+f(CS2)},
+      K2=kpi('Összes egyenleg',ft(bA),'',pp2(function(x){return ft(x.inc-x.exp)}),bA<0)+kpi('Összes megtakarítás',(AL&&AL.sv!=null&&AL.sv!==''?(AL.sv*100).toFixed(1).replace('.',','):(TA.inc?Math.round(bA/TA.inc*100):0))+'%','',pp2(sv));
     h+='<div class="kpis mo">'+K+'</div><div class="fgrid"><div class="kpis k2">'+K+'</div>'+donutCard(m.ym)+'<div class="kpis k1">'+K2+'</div>'+trCard()+'</div>'}
   return h+'</div>';
 }
