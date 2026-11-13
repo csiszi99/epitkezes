@@ -309,11 +309,7 @@ function rMini(){
   $('#v').innerHTML=h}
 if(MINI)setInterval(render,30000);
 function fitMini(){try{var m=document.querySelector('main');if(!m||!m.offsetHeight)return;var fl=!matchMedia('(display-mode: browser)').matches&&!document.fullscreenElement;document.body.classList.toggle('fl',fl);document.title='Építkezés – Mini ['+m.offsetHeight+','+(outerWidth-innerWidth)+','+(outerHeight-innerHeight)+']'+(window.__o&&Date.now()-window.__o<3500?'!':'')}catch(e){}}
-function posMini(){try{if(!document.body.classList.contains('fl'))return;var m=document.querySelector('main');if(!m||!m.offsetHeight)return;
-  var W=376,cw=outerWidth-innerWidth,ch=outerHeight-innerHeight,w=W+cw,h=m.offsetHeight+ch,al=screen.availLeft||0,at=screen.availTop||0,x=al+screen.availWidth-w-8,y=at+screen.availHeight-h-8;
-  if(innerWidth<W-2)window.resizeTo(w,Math.max(outerHeight,h));
-  if(Math.abs(screenX-x)>3||Math.abs(screenY-y)>3)window.moveTo(x,y)}catch(e){}}
-if(MINI){setTimeout(fitMini,800);setInterval(fitMini,1500);setTimeout(posMini,1200);setInterval(posMini,1500)}
+if(MINI){setTimeout(fitMini,800);setInterval(fitMini,1500)}
 function openFull(){if(document.body.classList.contains('fl')){window.__o=Date.now();fitMini();return}var w=null;try{w=window.open(location.pathname+'?full=1','epitkezes_full')}catch(e){}if(!w)location.href=location.pathname}
 if(MINI){var mv=$('#v');mv.addEventListener('pointerenter',function(e){var r=mv.getBoundingClientRect();mv.style.setProperty('--a',(Math.atan2(e.clientX-(r.left+r.width/2),-(e.clientY-(r.top+r.height/2)))*180/Math.PI)+'deg')});
   mv.addEventListener('click',function(e){if(e.shiftKey)return;mv.classList.add('go');setTimeout(function(){mv.classList.remove('go');openFull()},380)})}
