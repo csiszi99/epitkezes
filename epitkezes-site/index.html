@@ -212,8 +212,10 @@ function gsiInit(){
 function showLogin(){
   if($('#lg'))return;var d=document.createElement('div');d.id='lg';
   d.style.cssText='position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;text-align:center';
-  d.innerHTML='<h1 style="margin:0">Építkezés</h1><small class="mut">Jelentkezz be a Google-fiókoddal</small><div id="gb"></div>';
+  d.innerHTML='<h1 style="margin:0">Építkezés</h1><small class="mut">Jelentkezz be a Google-fiókoddal</small><div id="gb"></div><small id="lm" class="mut" style="max-width:320px;line-height:1.4"></small>';
   document.body.appendChild(d);
+  if(/FBAN|FBAV|Instagram|Messenger|Line\/|GSA\/|; wv\)/.test(navigator.userAgent))$('#lm').textContent='Úgy tűnik, az oldal egy másik app beépített böngészőjében nyílt meg. Nyisd meg a linket Chrome-ban (Android) vagy Safariban (iPhone), és ott add hozzá a kezdőképernyőhöz.';
+  setTimeout(function(){var l=$('#lm');if(l&&!GSI)l.textContent='A Google-belépés nem tölt be. Ellenőrizd a netkapcsolatot, vagy nyisd meg az oldalt Chrome-ban / Safariban.'},8000);
   var t=setInterval(function(){if(gsiInit()||GSI){clearInterval(t);google.accounts.id.renderButton($('#gb'),{theme:'filled_blue',size:'large',shape:'pill',text:'signin_with',locale:'hu'})}},150)}
 function ensureTok(cb){
   if(TOK&&TEXP>Date.now()/1000+60)return cb();
@@ -222,8 +224,11 @@ function ensureTok(cb){
 function srv(fn,args){return new Promise(function(res,rej){ensureTok(function(){
   fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({t:TOK,fn:fn,a:args||[]})})
   .then(function(r){return r.json()}).then(function(j){
-    if(j.ok)return res(j.v);
-    if(j.auth){TOK=null;TEXP=0;try{localStorage.removeItem('gt')}catch(e){}ensureTok(function(){srv(fn,args).then(res,rej)});return}
+    if(j.ok){window.AF=0;return res(j.v)}
+    if(j.auth){var em='';try{em=JSON.parse(atob(TOK.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).email||''}catch(e){}
+      TOK=null;TEXP=0;try{localStorage.removeItem('gt')}catch(e){}
+      if(window.AF>=1){window.AF=0;showLogin();var l=$('#lm');if(l)l.textContent='A(z) '+em+' fiók nincs engedélyezve az appban. Ha ez nem a megfelelő fiók, válassz másikat; egyébként szólj Dávidnak.';rej(new Error('Nincs jogosultság'));return}
+      window.AF=(window.AF||0)+1;ensureTok(function(){srv(fn,args).then(res,rej)});return}
     rej(new Error(j.e||'Hiba'))}).catch(function(e){rej(new Error('Nincs kapcsolat'))})})})}
 document.addEventListener('visibilitychange',function(){if(!document.hidden&&SEC&&typeof loadAll=='function'&&window.__loaded&&Date.now()-window.__loaded>120000){window.__loaded=Date.now();loadAll()}});
 if(MINI){setInterval(function(){if(TOK&&TEXP>Date.now()/1000+120){window.__loaded=Date.now();loadAll()}else{try{if(gsiInit()||GSI)google.accounts.id.prompt()}catch(e){}}},300000)}
@@ -304,7 +309,11 @@ function rMini(){
   $('#v').innerHTML=h}
 if(MINI)setInterval(render,30000);
 function fitMini(){try{var m=document.querySelector('main');if(!m||!m.offsetHeight)return;var fl=!matchMedia('(display-mode: browser)').matches&&!document.fullscreenElement;document.body.classList.toggle('fl',fl);document.title='Építkezés – Mini ['+m.offsetHeight+','+(outerWidth-innerWidth)+','+(outerHeight-innerHeight)+']'+(window.__o&&Date.now()-window.__o<3500?'!':'')}catch(e){}}
-if(MINI){setTimeout(fitMini,800);setInterval(fitMini,1500)}
+function posMini(){try{if(!document.body.classList.contains('fl'))return;var m=document.querySelector('main');if(!m||!m.offsetHeight)return;
+  var W=376,cw=outerWidth-innerWidth,ch=outerHeight-innerHeight,w=W+cw,h=m.offsetHeight+ch,al=screen.availLeft||0,at=screen.availTop||0,x=al+screen.availWidth-w-8,y=at+screen.availHeight-h-8;
+  if(innerWidth<W-2)window.resizeTo(w,Math.max(outerHeight,h));
+  if(Math.abs(screenX-x)>3||Math.abs(screenY-y)>3)window.moveTo(x,y)}catch(e){}}
+if(MINI){setTimeout(fitMini,800);setInterval(fitMini,1500);setTimeout(posMini,1200);setInterval(posMini,1500)}
 function openFull(){if(document.body.classList.contains('fl')){window.__o=Date.now();fitMini();return}var w=null;try{w=window.open(location.pathname+'?full=1','epitkezes_full')}catch(e){}if(!w)location.href=location.pathname}
 if(MINI){var mv=$('#v');mv.addEventListener('pointerenter',function(e){var r=mv.getBoundingClientRect();mv.style.setProperty('--a',(Math.atan2(e.clientX-(r.left+r.width/2),-(e.clientY-(r.top+r.height/2)))*180/Math.PI)+'deg')});
   mv.addEventListener('click',function(e){if(e.shiftKey)return;mv.classList.add('go');setTimeout(function(){mv.classList.remove('go');openFull()},380)})}
